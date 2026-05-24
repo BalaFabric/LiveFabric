@@ -1,0 +1,140 @@
+table DeptTest
+	lineageTag: 3397619b-a482-4e35-86a6-9564c884210d
+	sourceLineageTag: [dbo].[DeptTest]
+
+	column EmpID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2e0db6ca-3395-4270-affe-0dc104cef970
+		sourceLineageTag: EmpID
+		summarizeBy: count
+		sourceColumn: EmpID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpCode
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 6430aac6-6f72-4627-9a44-79c684d6e818
+		sourceLineageTag: EmpCode
+		summarizeBy: none
+		sourceColumn: EmpCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 286441d2-516e-46c8-86e6-06a2f6831345
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 0ac56908-c2d3-4f4b-abdf-8f2dd6635193
+		sourceLineageTag: Gender
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 8d6f6c90-c02f-442c-89f5-8e38542c81eb
+		sourceLineageTag: Department
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salary
+		dataType: decimal
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(10, 2)
+		lineageTag: 39640233-a985-4368-8a2b-358c8b5ffa37
+		sourceLineageTag: Salary
+		summarizeBy: sum
+		sourceColumn: Salary
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column City
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 020949ec-16bf-4820-96a7-e12390b41b96
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column ManagerID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2b11ec10-27ed-458f-85fd-296b9f8390c2
+		sourceLineageTag: ManagerID
+		summarizeBy: count
+		sourceColumn: ManagerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Email
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 67002b11-ece5-4f89-81a0-d0eab2c01aca
+		sourceLineageTag: Email
+		summarizeBy: none
+		sourceColumn: Email
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 78f43ecf-b362-472c-b3f4-56668945c1b7
+		sourceLineageTag: IsActive
+		summarizeBy: none
+		sourceColumn: IsActive
+
+		annotation SummarizationSetBy = Automatic
+
+	column HireDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: 77788499-0b25-4d2e-a17b-9775f6db2bd4
+		sourceLineageTag: HireDate
+		summarizeBy: none
+		sourceColumn: HireDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreatedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 4f4c4c07-7246-4f8e-8e0b-3ddadc36d8b4
+		sourceLineageTag: CreatedDate
+		summarizeBy: none
+		sourceColumn: CreatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DeptTest = entity
+		mode: directLake
+		source
+			entityName: DeptTest
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

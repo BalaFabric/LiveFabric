@@ -1,0 +1,42 @@
+{
+  "config": "{\"version\":\"5.73\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY26SU05\",\"type\":2,\"version\":{\"visual\":\"2.9.0\",\"report\":\"3.3.0\",\"page\":\"2.3.1\"}}},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":0,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY26SU05",
+            "path": "BaseThemes/CY26SU05.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "55f5eac10b8961677d73",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"16609e6d24435ad5e2b6\",\"layouts\":[{\"id\":0,\"position\":{\"x\":383.1292517006803,\"y\":165.4421768707483,\"z\":0,\"width\":640.8707482993198,\"height\":464.9795918367347,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"tableEx\",\"projections\":{\"Values\":[{\"queryRef\":\"CountNonNull(salesdemomodel.EmpId)\"},{\"queryRef\":\"salesdemomodel.EmpName\"},{\"queryRef\":\"Sum(salesdemomodel.EmpSalary)\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"s\",\"Entity\":\"salesdemomodel\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"EmpId\"},\"Name\":\"CountNonNull(salesdemomodel.EmpId)\",\"NativeReferenceName\":\"EmpId\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"EmpName\"},\"Name\":\"salesdemomodel.EmpName\",\"NativeReferenceName\":\"EmpName\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s\"}},\"Property\":\"EmpSalary\"}},\"Function\":0},\"Name\":\"Sum(salesdemomodel.EmpSalary)\",\"NativeReferenceName\":\"Sum of EmpSalary\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"values\":[{\"properties\":{\"fontSize\":{\"expr\":{\"Literal\":{\"Value\":\"20D\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 464.98,
+          "width": 640.87,
+          "x": 383.13,
+          "y": 165.44,
+          "z": 0.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ]
+}

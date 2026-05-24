@@ -1,0 +1,37 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "test fresh",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "3795deb5-7001-4008-8799-70424fc3aa0a",
+          "datasetId": "a2d2b5a5-8bd3-4597-af46-2177aa3e420f",
+          "objects": [
+            {
+              "table": "DeptInfo"
+            },
+            {
+              "table": "Customer"
+            }
+          ],
+          "waitOnCompletion": true,
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "b4d842f8-41c6-40a4-a405-4ab598a82a4b"
+        }
+      }
+    ]
+  }
+}

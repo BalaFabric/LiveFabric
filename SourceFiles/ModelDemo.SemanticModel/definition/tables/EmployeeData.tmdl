@@ -1,0 +1,58 @@
+table EmployeeData
+	lineageTag: 99f4db3d-95b1-47a9-b997-47908ecd7b04
+	sourceLineageTag: [dbo].[EmployeeData]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: a67c0f3b-97e8-4b73-81c8-31aae24794ff
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: bb92245c-14b9-4d13-9d72-5aee412c28e7
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 79b1b50f-f7f0-44f4-adae-6f137760e58c
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpLocation
+		dataType: string
+		lineageTag: 425d49b5-d102-43b8-ba42-c6562aba71bc
+		sourceLineageTag: EmpLocation
+		summarizeBy: none
+		sourceColumn: EmpLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpCheck
+		dataType: string
+		lineageTag: 8a4a6c91-9d4e-489f-abe2-ac33119d3a89
+		sourceLineageTag: EmpCheck
+		summarizeBy: none
+		sourceColumn: EmpCheck
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EmployeeData = entity
+		mode: directLake
+		source
+			entityName: EmployeeData
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+

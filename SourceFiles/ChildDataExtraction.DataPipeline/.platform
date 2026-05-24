@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "ChildDataExtraction"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "5043a7c3-0354-84d5-4bff-727328326f27"
+  }
+}

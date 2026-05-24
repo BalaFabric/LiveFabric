@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Data Record Capture"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f2988e46-93e2-a1ac-4696-432046acf532"
+  }
+}

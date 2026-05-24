@@ -1,0 +1,70 @@
+table DestinationTbl
+	lineageTag: 68752688-f96f-4ebe-952b-998764ed58fd
+	sourceLineageTag: [dbo].[DestinationTbl]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: 87cf638e-b7cb-41dc-92bc-a726f50cbf00
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: c85fc31f-9b2e-4fb5-9411-892c0ba5ad4f
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: a4b8b88c-c650-4aab-a0bd-03740ab5674b
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreatedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b6e6a621-5cc1-4c4d-921b-411e891cd3d6
+		sourceLineageTag: CreatedDate
+		summarizeBy: none
+		sourceColumn: CreatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpdatedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: eb2fb47d-572f-4410-a393-f500103f481e
+		sourceLineageTag: UpdatedDate
+		summarizeBy: none
+		sourceColumn: UpdatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column MSSQL_System_Uniquifier_142623551
+		dataType: int64
+		formatString: 0
+		lineageTag: 0dd45cf0-63d9-4e60-87a1-d5bd7c950faf
+		sourceLineageTag: MSSQL_System_Uniquifier_142623551
+		summarizeBy: sum
+		sourceColumn: MSSQL_System_Uniquifier_142623551
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DestinationTbl = entity
+		mode: directLake
+		source
+			entityName: DestinationTbl
+			schemaName: dbo
+			expressionSource: 'DirectLake - FabricDBPlan'
+

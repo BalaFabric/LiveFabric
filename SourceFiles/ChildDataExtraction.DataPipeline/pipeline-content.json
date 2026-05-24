@@ -1,0 +1,746 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "759457e5-22e0-899a-4b7f-d83d8c5939bc",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "SourceFolderName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.SourceFolderName",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "ArchiveFolderName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.ArchiveFolderName",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "FailedFolderName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.FailedFolderName",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "FileSchemaTableName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.FileSchemaTableName",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "FileLogTableName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.FileLogTableName",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "TableFormat": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.TableFormat",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "ModeOption": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.ModeOption",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "DataLoadSchema": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.DataLoadSchema",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "DataTableName": {
+              "value": {
+                "value": "@activity('Read Control Table').output.firstRow.DataTableName",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "File Process",
+        "dependsOn": [
+          {
+            "activity": "Read Control Table",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('File Process').output.result.exitValue,'failed')",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the below pipeline execution details.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineName: @{pipeline().PipelineName}</p>\n<p>ExecutionTime : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Failed Pipeline Execution Status"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failed Notificaton",
+              "dependsOn": []
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": "Pipeline Failed due to file errors",
+                "errorCode": "3443"
+              },
+              "name": "Pipeline Failed",
+              "dependsOn": [
+                {
+                  "activity": "Failure Sp Log",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "5b589d8c-0d1c-88d9-465c-1725fc9dab27",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "PipelineId": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "WorkspaceId": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TriggerId": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineName": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "StartDate": {
+                    "value": {
+                      "value": "@variables('varStartDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "EndDate": {
+                    "value": {
+                      "value": "@formatDateTime(convertFromUtc(utcNow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineExecutionStatus": {
+                    "value": "Failed",
+                    "type": "string"
+                  },
+                  "LogTableName": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.LogTableName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TableFormat": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.TableFormat",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "tablemode": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.ModeOption",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failure Log",
+              "dependsOn": [
+                {
+                  "activity": "Failed Notificaton",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SqlServerStoredProcedure",
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_InsertPipelineExecutionLog]",
+                "storedProcedureParameters": {
+                  "EndDate": {
+                    "value": {
+                      "value": "@formatDateTime(convertFromUtc(utcNow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineExecutionStatus": {
+                    "value": "Failed",
+                    "type": "String"
+                  },
+                  "PipelineId": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineName": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "StartDate": {
+                    "value": {
+                      "value": "@variables('varStartDate')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "TriggerId": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "WorkspaceId": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "linkedService": {
+                "name": "DWDemo",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "9a727391-3f3a-8377-4db5-a26e5a348532",
+                    "endpoint": "wwnrfbwvnjuefjh73xtls3crhm-wxpjknyboaeebb4zobbe7q5kbi.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failure Sp Log",
+              "dependsOn": [
+                {
+                  "activity": "Failure Log",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the below pipeline execution details.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineName: @{pipeline().PipelineName}</p>\n<p>ExecutionTime : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Success Pipeline Execution Status"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Success Email Alert",
+              "dependsOn": []
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "5b589d8c-0d1c-88d9-465c-1725fc9dab27",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "PipelineId": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "WorkspaceId": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TriggerId": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineTriggerByPipelineName": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "StartDate": {
+                    "value": {
+                      "value": "@variables('varStartDate')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "EndDate": {
+                    "value": {
+                      "value": "@formatDateTime(convertFromUtc(utcNow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "PipelineExecutionStatus": {
+                    "value": "Success",
+                    "type": "string"
+                  },
+                  "LogTableName": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.LogTableName",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "TableFormat": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.TableFormat",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "tablemode": {
+                    "value": {
+                      "value": "@activity('Read Control Table').output.firstRow.ModeOption",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Success Log",
+              "dependsOn": [
+                {
+                  "activity": "Success Email Alert",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SqlServerStoredProcedure",
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_InsertPipelineExecutionLog]",
+                "storedProcedureParameters": {
+                  "EndDate": {
+                    "value": {
+                      "value": "@formatDateTime(convertFromUtc(utcNow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineExecutionStatus": {
+                    "value": "Success",
+                    "type": "String"
+                  },
+                  "PipelineId": {
+                    "value": {
+                      "value": "@pipeline().Pipeline",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineName": {
+                    "value": {
+                      "value": "@pipeline().PipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().RunId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineName": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "PipelineTriggerByPipelineRunId": {
+                    "value": {
+                      "value": "@pipeline().parameters.PipelineTriggerByPipelineRunId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "StartDate": {
+                    "value": {
+                      "value": "@variables('varStartDate')",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "TriggerId": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerId",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "TriggerType": {
+                    "value": {
+                      "value": "@pipeline().parameters.TriggerType",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "WorkspaceId": {
+                    "value": {
+                      "value": "@pipeline().DataFactory",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "linkedService": {
+                "name": "DWDemo",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "9a727391-3f3a-8377-4db5-a26e5a348532",
+                    "endpoint": "wwnrfbwvnjuefjh73xtls3crhm-wxpjknyboaeebb4zobbe7q5kbi.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Success Log Sp",
+              "dependsOn": [
+                {
+                  "activity": "Success Log",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "Condition Check",
+        "dependsOn": [
+          {
+            "activity": "File Process",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "varStartDate",
+          "value": {
+            "value": "@formatDateTime(convertFromUtc(utcNow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Pipeline StartDate",
+        "dependsOn": []
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "LakehouseTableSource"
+          },
+          "datasetSettings": {
+            "type": "LakehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "controlinformation"
+            },
+            "schema": [],
+            "linkedService": {
+              "name": "DemoLH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Tables"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Read Control Table",
+        "dependsOn": [
+          {
+            "activity": "Pipeline StartDate",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "TriggerType": {
+        "type": "string"
+      },
+      "TriggerId": {
+        "type": "string"
+      },
+      "PipelineTriggerByPipelineId": {
+        "type": "string"
+      },
+      "PipelineTriggerByPipelineRunId": {
+        "type": "string"
+      },
+      "PipelineTriggerByPipelineName": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "varStartDate": {
+        "type": "String"
+      },
+      "varEndDate": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,646 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "SetPipelineStartTime",
+          "value": {
+            "value": "@utcNow()",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "PipelineStartTime",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "datepredicate",
+          "value": {
+            "value": "@if(equals(pipeline().parameters.sqlenddate,null),concat(pipeline().parameters.sqlsourcedatecolumn,' >= ''', pipeline().parameters.sqlstartdate,''''),concat(pipeline().parameters.sqlsourcedatecolumn, ' >= ''',pipeline().parameters.sqlstartdate,''' and ', pipeline().parameters.sqlsourcedatecolumn,' < ''',pipeline().parameters.sqlenddate,''''))",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set Date predicate",
+        "dependsOn": [
+          {
+            "activity": "PipelineStartTime",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(pipeline().parameters.loadtype,'full')",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderQuery": {
+                    "value": "select * from @{pipeline().parameters.sqlsourceschema}.@{pipeline().parameters.sqlsourcetable} where @{variables('datepredicate')}",
+                    "type": "Expression"
+                  },
+                  "partitionOption": "None",
+                  "queryTimeout": "02:00:00",
+                  "datasetSettings": {
+                    "type": "FabricSqlDatabaseTable",
+                    "schema": [],
+                    "connectionSettings": {
+                      "name": "FabricDBPlan",
+                      "properties": {
+                        "type": "FabricSqlDatabase",
+                        "typeProperties": {
+                          "artifactId": "706e7e8b-e948-804b-4bf6-8a078bceafe0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000"
+                        },
+                        "externalReferences": {
+                          "connection": "fccb86ef-969f-4e80-8642-f39cd46c2683"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "LakehouseTableSink",
+                  "tableActionOption": "OverwriteSchema",
+                  "applyVOrder": true,
+                  "partitionOption": "None",
+                  "datasetSettings": {
+                    "type": "LakehouseTable",
+                    "typeProperties": {
+                      "schema": "dbo",
+                      "table": {
+                        "value": "@pipeline().parameters.sinktablename",
+                        "type": "Expression"
+                      }
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Tables"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Copy data to delta table",
+              "dependsOn": []
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "1eaa032d-b648-8edc-411a-20802868a2b2",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "lakehousePath": {
+                    "value": "abfss://TestClass@onelake.dfs.fabric.microsoft.com/DemoLH.Lakehouse/Tables",
+                    "type": "string"
+                  },
+                  "tableName": {
+                    "value": {
+                      "value": "@pipeline().parameters.sinktablename",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "tableKey": {
+                    "value": {
+                      "value": "@pipeline().parameters.sourcekeycolumn",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "dateColumn": {
+                    "value": {
+                      "value": "@pipeline().parameters.sqlsourcedatecolumn",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Get MaxDate loaded",
+              "dependsOn": [
+                {
+                  "activity": "Copy data to delta table",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "maxdate",
+                "value": {
+                  "value": "@split(split(activity('Get MaxDate loaded').output.result.exitValue,'|')[0],'=')[1]",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Get maxdate",
+              "dependsOn": [
+                {
+                  "activity": "Get MaxDate loaded",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "rowsinserted",
+                "value": {
+                  "value": "@split(split(activity('Get MaxDate loaded').output.result.exitValue,'|')[1],'=')[1]",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "set rows inserted",
+              "dependsOn": [
+                {
+                  "activity": "Get maxdate",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "pipelineendtime",
+                "value": {
+                  "value": "@utcnow()",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set pipeline endtime",
+              "dependsOn": [
+                {
+                  "activity": "set rows inserted",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Script",
+              "typeProperties": {
+                "scripts": [
+                  {
+                    "text": {
+                      "value": "Update dbo.PipelineOrchestrator_LH \r\nset batchloaddatetime = '@{pipeline().parameters.batchloaddatetime}', \r\nloadstatus = '@{activity('Copy data to delta table').output.executionDetails[0].status}', \r\nrowsread = @{activity('Copy data to delta table').output.rowsRead}, \r\nrowscopied= @{activity('Copy data to delta table').output.rowsCopied}, \r\ndeltalakeinserted = '@{variables('rowsinserted')}', \r\ndeltalakeupdated =0, \r\nsqlmaxdatetime = '@{variables('maxdate')}', \r\npipelinestarttime='@{variables('SetPipelineStartTime')}', \r\npipelineendtime = '@{variables('pipelineendtime')}' \r\nwhere sqlsourceschema = '@{pipeline().parameters.sqlsourceschema}' and sqlsourcetable = '@{pipeline().parameters.sqlsourcetable}'",
+                      "type": "Expression"
+                    },
+                    "type": "NonQuery"
+                  }
+                ],
+                "scriptBlockExecutionTimeout": "02:00:00"
+              },
+              "connectionSettings": {
+                "name": "FabricDBPlan",
+                "properties": {
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "artifactId": "706e7e8b-e948-804b-4bf6-8a078bceafe0",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "externalReferences": {
+                    "connection": "fccb86ef-969f-4e80-8642-f39cd46c2683"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Update Pipeline Run details",
+              "dependsOn": [
+                {
+                  "activity": "Set pipeline endtime",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "FabricSqlDatabaseSource",
+                  "sqlReaderQuery": {
+                    "value": "select * from @{pipeline().parameters.sqlsourceschema}.@{pipeline().parameters.sqlsourcetable} where @{variables('datepredicate')}",
+                    "type": "Expression"
+                  },
+                  "partitionOption": "None",
+                  "queryTimeout": "02:00:00",
+                  "datasetSettings": {
+                    "type": "FabricSqlDatabaseTable",
+                    "schema": [],
+                    "connectionSettings": {
+                      "name": "FabricDBPlan",
+                      "properties": {
+                        "type": "FabricSqlDatabase",
+                        "typeProperties": {
+                          "artifactId": "706e7e8b-e948-804b-4bf6-8a078bceafe0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000"
+                        },
+                        "externalReferences": {
+                          "connection": "fccb86ef-969f-4e80-8642-f39cd46c2683"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "ParquetSink",
+                  "formatSettings": {
+                    "type": "ParquetWriteSettings",
+                    "enableVertiParquet": true
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "Parquet",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": {
+                          "value": "incremental/@{pipeline().parameters.sinktablename}",
+                          "type": "Expression"
+                        },
+                        "fileName": {
+                          "value": "@{pipeline().parameters.sinktablename}.parquet",
+                          "type": "Expression"
+                        }
+                      },
+                      "compressionCodec": "snappy"
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Copy data to parquet",
+              "dependsOn": []
+            },
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "4facd742-4244-85c0-4b90-1c7ef8a45c6b",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "lakehousePath": {
+                    "value": "abfss://TestClass@onelake.dfs.fabric.microsoft.com/DemoLH.Lakehouse",
+                    "type": "string"
+                  },
+                  "tableName": {
+                    "value": {
+                      "value": "@pipeline().parameters.sinktablename",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "tableKey": {
+                    "value": {
+                      "value": "@pipeline().parameters.sourcekeycolumn",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  },
+                  "dateColumn": {
+                    "value": {
+                      "value": "@pipeline().parameters.sqlsourcedatecolumn",
+                      "type": "Expression"
+                    },
+                    "type": "string"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Load to Delta",
+              "dependsOn": [
+                {
+                  "activity": "Copy data to parquet",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "maxdate",
+                "value": {
+                  "value": "@split(split(activity('Load to Delta').output.result.exitValue,'|')[0],'=')[1]",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Get maxdate incr",
+              "dependsOn": [
+                {
+                  "activity": "Load to Delta",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "rowsinserted",
+                "value": {
+                  "value": "@split(split(activity('Load to Delta').output.result.exitValue,'|')[1],'=')[1]",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "set rows inserted incr",
+              "dependsOn": [
+                {
+                  "activity": "Get maxdate incr",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "rowsupdated",
+                "value": {
+                  "value": "@split(split(activity('Load to Delta').output.result.exitValue,'|')[2],'=')[1]",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "set rows updated incr",
+              "dependsOn": [
+                {
+                  "activity": "set rows inserted incr",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "pipelineendtime",
+                "value": {
+                  "value": "@utcnow()",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set pipeline endtime incr",
+              "dependsOn": [
+                {
+                  "activity": "set rows updated incr",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Script",
+              "typeProperties": {
+                "scripts": [
+                  {
+                    "text": {
+                      "value": "Update dbo.PipelineOrchestrator_LH\r\n set batchloaddatetime = '@{pipeline().parameters.batchloaddatetime}', \r\n loadstatus = '@{activity('Copy data to parquet').output.executionDetails[0].status}', \r\n rowsread = @{activity('Copy data to parquet').output.rowsRead}, \r\n rowscopied= @{activity('Copy data to parquet').output.rowsCopied},\r\n deltalakeinserted = '@{variables('rowsinserted')}',\r\n deltalakeupdated = '@{variables('rowsupdated')}', \r\n sqlmaxdatetime = '@{variables('maxdate')}', \r\n sqlstartdate = '@{variables('maxdate')}', \r\n pipelinestarttime='@{variables('SetPipelineStartTime')}',\r\n  pipelineendtime = '@{variables('pipelineendtime')}' \r\nwhere sqlsourceschema = '@{pipeline().parameters.sqlsourceschema}' and sqlsourcetable = '@{pipeline().parameters.sqlsourcetable}'",
+                      "type": "Expression"
+                    },
+                    "type": "NonQuery"
+                  }
+                ],
+                "scriptBlockExecutionTimeout": "02:00:00"
+              },
+              "connectionSettings": {
+                "name": "FabricDBPlan",
+                "properties": {
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "artifactId": "706e7e8b-e948-804b-4bf6-8a078bceafe0",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "externalReferences": {
+                    "connection": "fccb86ef-969f-4e80-8642-f39cd46c2683"
+                  },
+                  "annotations": []
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Update Pipeline Run details - incremental",
+              "dependsOn": [
+                {
+                  "activity": "Set pipeline endtime incr",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "Check loadtype",
+        "dependsOn": [
+          {
+            "activity": "Set Date predicate",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "sqlsourcedatecolumn": {
+        "type": "string"
+      },
+      "sqlstartdate": {
+        "type": "string"
+      },
+      "sqlenddate": {
+        "type": "string"
+      },
+      "sqlsourceschema": {
+        "type": "string"
+      },
+      "sqlsourcetable": {
+        "type": "string"
+      },
+      "loadtype": {
+        "type": "string"
+      },
+      "sourcekeycolumn": {
+        "type": "string"
+      },
+      "batchloaddatetime": {
+        "type": "string"
+      },
+      "sinktablename": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "SetPipelineStartTime": {
+        "type": "String"
+      },
+      "datepredicate": {
+        "type": "String"
+      },
+      "maxdate": {
+        "type": "String"
+      },
+      "rowsinserted": {
+        "type": "String"
+      },
+      "rowsupdated": {
+        "type": "String"
+      },
+      "pipelinestarttime": {
+        "type": "String"
+      },
+      "pipelineendtime": {
+        "type": "String"
+      },
+      "LoadType": {
+        "type": "String"
+      }
+    }
+  }
+}

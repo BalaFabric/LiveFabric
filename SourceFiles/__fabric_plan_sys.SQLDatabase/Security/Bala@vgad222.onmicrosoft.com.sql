@@ -1,0 +1,6 @@
+CREATE USER [Bala@vgad222.onmicrosoft.com]
+    WITH SID = 0xFB991BBC0A51704DAC90E20C013C00E3, TYPE = E;
+
+
+GO
+

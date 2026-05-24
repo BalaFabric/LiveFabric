@@ -1,0 +1,177 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "batchloaddatetime",
+          "value": {
+            "value": "@pipeline().TriggerTime",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "set batch load datetime",
+        "dependsOn": []
+      },
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": {
+              "value": "SELECT * FROM [dbo].[PipelineOrchestrator_LH] where skipload=0 and 1=@{pipeline().parameters.loadbronze}",
+              "type": "Expression"
+            },
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "connectionSettings": {
+              "name": "FabricDBPlan",
+              "properties": {
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "artifactId": "706e7e8b-e948-804b-4bf6-8a078bceafe0",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000"
+                },
+                "externalReferences": {
+                  "connection": "fccb86ef-969f-4e80-8642-f39cd46c2683"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "firstRowOnly": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get tables to load to deltalake",
+        "dependsOn": [
+          {
+            "activity": "set batch load datetime",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@activity('Get tables to load to deltalake').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "ExecutePipeline",
+              "typeProperties": {
+                "pipeline": {
+                  "referenceName": "af6cfe9b-ce03-a557-445a-56aca79dc21e",
+                  "type": "PipelineReference"
+                },
+                "parameters": {
+                  "sqlsourcedatecolumn": {
+                    "value": "@item().sqlsourcedatecolumn",
+                    "type": "Expression"
+                  },
+                  "sqlstartdate": {
+                    "value": "@item().sqlstartdate",
+                    "type": "Expression"
+                  },
+                  "sqlenddate": {
+                    "value": "@item().sqlenddate",
+                    "type": "Expression"
+                  },
+                  "sqlsourceschema": {
+                    "value": "@item().sqlsourceschema",
+                    "type": "Expression"
+                  },
+                  "sqlsourcetable": {
+                    "value": "@item().sqlsourcetable",
+                    "type": "Expression"
+                  },
+                  "loadtype": {
+                    "value": "@item().loadtype",
+                    "type": "Expression"
+                  },
+                  "sourcekeycolumn": {
+                    "value": "@item().sourcekeycolumn",
+                    "type": "Expression"
+                  },
+                  "batchloaddatetime": {
+                    "value": "@item().batchloaddatetime",
+                    "type": "Expression"
+                  },
+                  "sinktablename": {
+                    "value": "@item().sinktablename",
+                    "type": "Expression"
+                  }
+                },
+                "waitOnCompletion": true
+              },
+              "policy": {
+                "secureInput": false
+              },
+              "name": "Get WWImporters Data",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "For each table to load to deltalake",
+        "dependsOn": [
+          {
+            "activity": "Get tables to load to deltalake",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "startyear": {
+        "type": "int",
+        "defaultValue": 2013
+      },
+      "endyear": {
+        "type": "int",
+        "defaultValue": 2027
+      },
+      "loaddwh": {
+        "type": "int",
+        "defaultValue": 0
+      },
+      "loadgoldlh": {
+        "type": "int",
+        "defaultValue": 1
+      },
+      "loadbronze": {
+        "type": "int",
+        "defaultValue": 1
+      },
+      "waittime": {
+        "type": "int",
+        "defaultValue": 60
+      }
+    },
+    "variables": {
+      "batchloaddatetime": {
+        "type": "String"
+      }
+    }
+  }
+}

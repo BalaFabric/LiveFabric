@@ -1,0 +1,58 @@
+table samepledata
+	lineageTag: 63a9e9e8-8139-4435-b593-f3c6f639433a
+	sourceLineageTag: [dbo].[samepledata]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: 8765dca2-44f1-4320-b4cf-18d97361a917
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: e500c0bd-8ded-49fb-8523-7e868bf404ff
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpGender
+		dataType: string
+		lineageTag: 5ddcf007-4bfe-4109-9b94-d6cc374c0f80
+		sourceLineageTag: EmpGender
+		summarizeBy: none
+		sourceColumn: EmpGender
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 125b3a98-6b38-4ace-90c4-0c7f2da446ff
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpDept
+		dataType: string
+		lineageTag: 16d9ad98-f80d-41a3-aac7-947cb6129749
+		sourceLineageTag: EmpDept
+		summarizeBy: none
+		sourceColumn: EmpDept
+
+		annotation SummarizationSetBy = Automatic
+
+	partition samepledata = entity
+		mode: directLake
+		source
+			entityName: samepledata
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

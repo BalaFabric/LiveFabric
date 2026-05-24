@@ -1,0 +1,65 @@
+table EmployeeData
+	lineageTag: 54de4d10-1dbf-4dc7-b514-ada9cadfe45c
+	sourceLineageTag: [dbo].[EmployeeData]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: b5cdb56a-e452-4077-9c8a-6d737eb0fd99
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 1f8eca3c-d0f7-42c2-bf4e-437d401d42d0
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 5548b248-3891-487e-ac8f-40356fac7398
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpLocation
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 8c520fa5-cbf3-46a9-9b25-e26bda2020cf
+		sourceLineageTag: EmpLocation
+		summarizeBy: none
+		sourceColumn: EmpLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpCheck
+		dataType: string
+		sourceProviderType: char
+		lineageTag: 20c77828-cef5-4b8b-b236-701009c3ebe1
+		sourceLineageTag: EmpCheck
+		summarizeBy: none
+		sourceColumn: EmpCheck
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EmployeeData = entity
+		mode: directLake
+		source
+			entityName: EmployeeData
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

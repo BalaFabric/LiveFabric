@@ -1,0 +1,84 @@
+table empdeltatable
+	lineageTag: 99e54af3-5ab7-4244-a434-af4609fb767d
+	sourceLineageTag: [dbo].[empdeltatable]
+
+	column EmpId
+		dataType: string
+		lineageTag: 95436ca4-1a02-4624-9ff4-736930331b5d
+		sourceLineageTag: EmpId
+		summarizeBy: none
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: e25d4fe9-2e96-4cb6-afb4-31ed743d5871
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salary
+		dataType: string
+		lineageTag: 5b18d00d-3787-477b-bc34-fd61b2245a92
+		sourceLineageTag: Salary
+		summarizeBy: none
+		sourceColumn: Salary
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptName
+		dataType: string
+		lineageTag: 339b4cc8-7047-4cd4-96e7-fe92415e45f3
+		sourceLineageTag: DeptName
+		summarizeBy: none
+		sourceColumn: DeptName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 4afdc3d6-9df4-40e0-84bb-4502b01582ba
+		sourceLineageTag: Location
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 35f51b90-2330-49e4-9047-82fb0586a86d
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoadDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0944c2b6-0234-4beb-bc88-e3605af31a9c
+		sourceLineageTag: LoadDate
+		summarizeBy: none
+		sourceColumn: LoadDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceFileName
+		dataType: string
+		lineageTag: 4ce52a2b-ad7f-4c7a-8874-f3600d5a2d0e
+		sourceLineageTag: SourceFileName
+		summarizeBy: none
+		sourceColumn: SourceFileName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition empdeltatable = entity
+		mode: directLake
+		source
+			entityName: empdeltatable
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

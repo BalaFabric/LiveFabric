@@ -1,0 +1,40 @@
+table salesdemomodel
+	lineageTag: 0cf3ecef-eb71-4625-b70a-9c404f1e4384
+	sourceLineageTag: [dbo].[salesdemomodel]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: 67eccfef-bb21-40dd-9352-142c68a72c08
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: 8c8a3e06-e746-4c12-9c4c-cd1071f0f4ab
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b879ff2-a27b-4db0-8486-34dbf0e5c981
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	partition salesdemomodel = entity
+		mode: directLake
+		source
+			entityName: salesdemomodel
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

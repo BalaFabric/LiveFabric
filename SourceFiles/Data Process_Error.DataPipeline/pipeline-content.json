@@ -1,0 +1,639 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "DelimitedText",
+            "typeProperties": {
+              "location": {
+                "type": "LakehouseLocation",
+                "folderPath": "RawIngestion"
+              },
+              "columnDelimiter": ",",
+              "quoteChar": "\"",
+              "escapeChar": "\\",
+              "firstRowAsHeader": true
+            },
+            "schema": [],
+            "linkedService": {
+              "name": "DemoLH",
+              "properties": {
+                "type": "Lakehouse",
+                "typeProperties": {
+                  "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                  "workspaceId": "00000000-0000-0000-0000-000000000000",
+                  "rootFolder": "Files"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "childItems"
+          ],
+          "storeSettings": {
+            "type": "AzureBlobStorageReadSettings",
+            "recursive": true,
+            "enablePartitionDiscovery": false
+          },
+          "formatSettings": {
+            "type": "DelimitedTextReadSettings"
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get Files",
+        "dependsOn": []
+      },
+      {
+        "type": "Office365Email",
+        "typeProperties": {
+          "body": "<p>Hi Team,</p>\n<p>Please find the below pipeliine execution details.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineId : @{pipeline().Pipeline}</p>\n<p>PipelineName : @{pipeline().PipelineName}</p>\n<p>ExecutionDetails : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>",
+          "to": "Bala@vgad222.onmicrosoft.com",
+          "subject": "Pipeline Success Execution "
+        },
+        "externalReferences": {
+          "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Success Alert",
+        "dependsOn": [
+          {
+            "activity": "Loop the Files",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(length(activity('Get Files').output.childItems), 0)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Wait",
+              "typeProperties": {
+                "waitTimeInSeconds": 1
+              },
+              "name": "Files is there in Root Folder",
+              "dependsOn": []
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the pipeline execution details in below.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineId : @{pipeline().Pipeline}</p>\n<p>PipelineName : @{pipeline().PipelineName}</p>\n<p>ExecutionDate : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>\n<p></p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Pipeline Failure Execution Alert"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failure Alert",
+              "dependsOn": []
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": "Pipeline is failed due to lack of files in root folder",
+                "errorCode": "3434"
+              },
+              "name": "Fail Pipeline",
+              "dependsOn": [
+                {
+                  "activity": "Failure Alert",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "Condition Check",
+        "dependsOn": [
+          {
+            "activity": "Get Files",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@activity('Get Files').output.childItems",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "DelimitedTextSource",
+                  "formatSettings": {
+                    "type": "DelimitedTextReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageReadSettings",
+                    "recursive": true,
+                    "enablePartitionDiscovery": false
+                  },
+                  "datasetSettings": {
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "RawIngestion",
+                        "fileName": {
+                          "value": "@item().name",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "quoteChar": "\"",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "LakehouseTableSink",
+                  "tableActionOption": "Append",
+                  "applyVOrder": false,
+                  "partitionOption": "None",
+                  "datasetSettings": {
+                    "type": "LakehouseTable",
+                    "typeProperties": {
+                      "schema": "dbo",
+                      "table": "EmpDeptInformation"
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Tables"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Data Load",
+              "dependsOn": []
+            },
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "DelimitedTextSource",
+                  "formatSettings": {
+                    "type": "DelimitedTextReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageReadSettings",
+                    "recursive": true,
+                    "enablePartitionDiscovery": false
+                  },
+                  "datasetSettings": {
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "RawIngestion",
+                        "fileName": {
+                          "value": "@item().name",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "quoteChar": "\"",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "DelimitedTextSink",
+                  "formatSettings": {
+                    "type": "DelimitedTextWriteSettings",
+                    "fileExtension": ".txt"
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "SuccessLoad",
+                        "fileName": {
+                          "value": "@concat(replace(replace(replace(concat(concat(replace(item().name,'.csv',''),'_'),formatDateTime(convertfromutc(utcnow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')),'-',''),' ',''),':',''),'.csv')",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "quoteChar": "\"",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "File Movement",
+              "dependsOn": [
+                {
+                  "activity": "Data Load",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Delete",
+              "typeProperties": {
+                "enableLogging": false,
+                "datasetSettings": {
+                  "type": "Binary",
+                  "typeProperties": {
+                    "location": {
+                      "type": "LakehouseLocation",
+                      "folderPath": "RawIngestion",
+                      "fileName": {
+                        "value": "@item().name",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "linkedService": {
+                    "name": "DemoLH",
+                    "properties": {
+                      "type": "Lakehouse",
+                      "typeProperties": {
+                        "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                        "workspaceId": "00000000-0000-0000-0000-000000000000",
+                        "rootFolder": "Files"
+                      },
+                      "annotations": []
+                    }
+                  },
+                  "annotations": []
+                },
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "enablePartitionDiscovery": false
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Delete Source Directory",
+              "dependsOn": [
+                {
+                  "activity": "File Movement",
+                  "dependencyConditions": [
+                    "Completed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "DelimitedTextSource",
+                  "formatSettings": {
+                    "type": "DelimitedTextReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageReadSettings",
+                    "recursive": true,
+                    "enablePartitionDiscovery": false
+                  },
+                  "datasetSettings": {
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "RawIngestion",
+                        "fileName": {
+                          "value": "@item().name",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "quoteChar": "\"",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "DelimitedTextSink",
+                  "formatSettings": {
+                    "type": "DelimitedTextWriteSettings",
+                    "fileExtension": ".txt"
+                  },
+                  "storeSettings": {
+                    "type": "AzureBlobStorageWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "DelimitedText",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "FailedLoad",
+                        "fileName": {
+                          "value": "@concat(replace(replace(replace(concat(concat(replace(item().name,'.csv',''),'_'),formatDateTime(convertfromutc(utcnow(),'India Standard Time'),'yyyy-MM-dd HH:mm:ss')),'-',''),' ',''),':',''),'.csv')",
+                          "type": "Expression"
+                        }
+                      },
+                      "columnDelimiter": ",",
+                      "quoteChar": "\"",
+                      "escapeChar": "\\",
+                      "firstRowAsHeader": true
+                    },
+                    "schema": [],
+                    "linkedService": {
+                      "name": "DemoLH",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Move to error Directory",
+              "dependsOn": [
+                {
+                  "activity": "Data Load",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": "Pipeline failed due to Incorrect Data",
+                "errorCode": "3434"
+              },
+              "name": "File Validation Failed",
+              "dependsOn": [
+                {
+                  "activity": "Failure Alert Email Notification",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the pipeline execution details in below.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineId : @{pipeline().Pipeline}</p>\n<p>PipelineName : @{pipeline().PipelineName}</p>\n<p>ExecutionDate : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>\n<p></p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Pipeline Failure Execution Alert"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failure Alert Email Notification",
+              "dependsOn": [
+                {
+                  "activity": "Delete Source Files after error",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Delete",
+              "typeProperties": {
+                "enableLogging": false,
+                "datasetSettings": {
+                  "type": "Binary",
+                  "typeProperties": {
+                    "location": {
+                      "type": "LakehouseLocation",
+                      "folderPath": "RawIngestion",
+                      "fileName": {
+                        "value": "@item().name",
+                        "type": "Expression"
+                      }
+                    }
+                  },
+                  "linkedService": {
+                    "name": "DemoLH",
+                    "properties": {
+                      "type": "Lakehouse",
+                      "typeProperties": {
+                        "artifactId": "4b25d3e5-a2ab-af3f-4cac-02482d91e8b0",
+                        "workspaceId": "00000000-0000-0000-0000-000000000000",
+                        "rootFolder": "Files"
+                      },
+                      "annotations": []
+                    }
+                  },
+                  "annotations": []
+                },
+                "storeSettings": {
+                  "type": "AzureBlobStorageReadSettings",
+                  "recursive": true,
+                  "enablePartitionDiscovery": false
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Delete Source Files after error",
+              "dependsOn": [
+                {
+                  "activity": "Move to error Directory",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "Loop the Files",
+        "dependsOn": [
+          {
+            "activity": "Condition Check",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

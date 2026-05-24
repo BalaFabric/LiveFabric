@@ -1,0 +1,39 @@
+table DeptInfo
+	lineageTag: dc4e3481-91fa-45c8-b69c-c81306a196a5
+	sourceLineageTag: [dbo].[DeptInfo]
+
+	column DeptId
+		dataType: int64
+		formatString: 0
+		lineageTag: 64ef2589-d627-47e4-a2df-c27fc40cf3bc
+		sourceLineageTag: DeptId
+		summarizeBy: count
+		sourceColumn: DeptId
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptName
+		dataType: string
+		lineageTag: 6976b3f2-bc61-467b-acb2-29a1a326b3e5
+		sourceLineageTag: DeptName
+		summarizeBy: none
+		sourceColumn: DeptName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptLocation
+		dataType: string
+		lineageTag: 456885af-a44c-4909-bd64-213acbdbc6d5
+		sourceLineageTag: DeptLocation
+		summarizeBy: none
+		sourceColumn: DeptLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DeptInfo = entity
+		mode: directLake
+		source
+			entityName: DeptInfo
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+

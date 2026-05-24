@@ -1,0 +1,57 @@
+table stagingcustomer
+	lineageTag: 8154e6b9-7fe7-4c4b-be4c-94637c39ec9b
+	sourceLineageTag: [dbo].[stagingcustomer]
+
+	column CustomerId
+		dataType: int64
+		formatString: 0
+		lineageTag: 2aec9683-9ecb-4789-a281-4771b29da289
+		sourceLineageTag: CustomerId
+		summarizeBy: count
+		sourceColumn: CustomerId
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: 336ffeec-8252-45ef-b684-8259fb5c38b1
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerGender
+		dataType: string
+		lineageTag: a57d1365-310c-4eca-929b-310546bcaf81
+		sourceLineageTag: CustomerGender
+		summarizeBy: none
+		sourceColumn: CustomerGender
+
+		annotation SummarizationSetBy = Automatic
+
+	column CusstomerLocation
+		dataType: string
+		lineageTag: 6fba53a4-342d-4178-bf1c-27feaa8ce8c1
+		sourceLineageTag: CusstomerLocation
+		summarizeBy: none
+		sourceColumn: CusstomerLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerCountry
+		dataType: string
+		lineageTag: 99249deb-43d2-424f-bd4b-6dd44ff46aba
+		sourceLineageTag: CustomerCountry
+		summarizeBy: none
+		sourceColumn: CustomerCountry
+
+		annotation SummarizationSetBy = Automatic
+
+	partition stagingcustomer = entity
+		mode: directLake
+		source
+			entityName: stagingcustomer
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

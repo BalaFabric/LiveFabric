@@ -1,0 +1,58 @@
+table Test
+	lineageTag: 1addcdf3-6bb2-4b6a-8806-ec5cee0b7c33
+	sourceLineageTag: [dbo].[Test]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: 4ad8d044-9436-4462-a55e-3c566d941ef2
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: 50f922a4-397d-4b8e-ac05-f6b8a6747859
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpGender
+		dataType: string
+		lineageTag: ea4408bb-687f-4a8d-8220-140abacf2792
+		sourceLineageTag: EmpGender
+		summarizeBy: none
+		sourceColumn: EmpGender
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 97114065-5339-443d-9c08-ec44728c43f5
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpDept
+		dataType: string
+		lineageTag: b8663166-8683-4879-be30-c9f4a53d5e9a
+		sourceLineageTag: EmpDept
+		summarizeBy: none
+		sourceColumn: EmpDept
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Test = entity
+		mode: directLake
+		source
+			entityName: Test
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+

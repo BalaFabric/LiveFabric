@@ -1,0 +1,67 @@
+table dimcustomer
+	lineageTag: 5a79900b-07af-4765-a605-9f984160d415
+	sourceLineageTag: [dbo].[dimcustomer]
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a4e5898-3b00-4552-9358-8655b7568c44
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerId
+		dataType: int64
+		formatString: 0
+		lineageTag: afcb413b-c221-433b-b6f4-2944c6fcffb8
+		sourceLineageTag: CustomerId
+		summarizeBy: none
+		sourceColumn: CustomerId
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: d2a17a9f-931a-4b00-a394-480e6935bcdc
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerGender
+		dataType: string
+		lineageTag: 4a55a5db-7d1c-49f7-a957-b1fa28a50c3c
+		sourceLineageTag: CustomerGender
+		summarizeBy: none
+		sourceColumn: CustomerGender
+
+		annotation SummarizationSetBy = Automatic
+
+	column CusstomerLocation
+		dataType: string
+		lineageTag: c6cfc5b4-3920-4141-a700-07e72c76ddc1
+		sourceLineageTag: CusstomerLocation
+		summarizeBy: none
+		sourceColumn: CusstomerLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerCountry
+		dataType: string
+		lineageTag: 91b7548e-f194-47a4-817d-04d43576779d
+		sourceLineageTag: CustomerCountry
+		summarizeBy: none
+		sourceColumn: CustomerCountry
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dimcustomer = entity
+		mode: directLake
+		source
+			entityName: dimcustomer
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

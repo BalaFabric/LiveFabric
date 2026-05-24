@@ -1,0 +1,44 @@
+table DeptInfo
+	lineageTag: 60e35e51-f63f-4134-88c9-063cd85adc41
+	sourceLineageTag: [dbo].[DeptInfo]
+
+	column DeptId
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 9a7a9342-4159-4fcf-a989-8c137fc8b0a9
+		sourceLineageTag: DeptId
+		summarizeBy: count
+		sourceColumn: DeptId
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptName
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: dd7cd40a-fb3f-46d2-8be7-f077591b153f
+		sourceLineageTag: DeptName
+		summarizeBy: none
+		sourceColumn: DeptName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptLocation
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: f9036dc0-cdf2-4c4b-a5ae-fece2eede4c9
+		sourceLineageTag: DeptLocation
+		summarizeBy: none
+		sourceColumn: DeptLocation
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DeptInfo = entity
+		mode: directLake
+		source
+			entityName: DeptInfo
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

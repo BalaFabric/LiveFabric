@@ -1,0 +1,42 @@
+table DEPARTMENT
+	lineageTag: 743a5877-23b3-4f45-ad01-38bba67d387b
+
+	column DEPTID
+		dataType: double
+		lineageTag: d11d505e-3c9e-4230-880b-fce536dfc0f5
+		summarizeBy: count
+		sourceColumn: DEPTID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DEPTNAME
+		dataType: string
+		lineageTag: b94e7c4e-ec53-48f6-b8b7-aad625cfa92d
+		summarizeBy: none
+		sourceColumn: DEPTNAME
+
+		annotation SummarizationSetBy = Automatic
+
+	column LOCATION
+		dataType: string
+		lineageTag: 9e0dc8bd-2fb6-4298-b073-eef3e188a120
+		summarizeBy: none
+		sourceColumn: LOCATION
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DEPARTMENT = m
+		mode: import
+		source =
+				let
+				  Source = Snowflake.Databases("ejuaikt-me93900.snowflakecomputing.com", "COMPUTE_WH", [Role = null, CreateNavigationProperties = null, ConnectionTimeout = null, CommandTimeout = null, Implementation = "2.0"]),
+				  #"Navigation 1" = Source{[Name = "SALESDB", Kind = "Database"]}[Data],
+				  #"Navigation 2" = #"Navigation 1"{[Name = "PUBLIC", Kind = "Schema"]}[Data],
+				  #"Navigation 3" = #"Navigation 2"{[Name = "DEPARTMENT", Kind = "Table"]}[Data]
+				in
+				  #"Navigation 3"
+
+	annotation PBI_ResultType = Table
+

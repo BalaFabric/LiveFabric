@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "Surrogate Key for SCD Type 2"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "cd4f1618-d23a-9b56-4a08-c5b2b1913ff6"
+  }
+}

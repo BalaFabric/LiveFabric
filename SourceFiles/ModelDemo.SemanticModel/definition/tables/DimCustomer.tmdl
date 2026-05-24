@@ -1,0 +1,58 @@
+table DimCustomer
+	lineageTag: 83f736e3-d986-4f1b-8505-9b35f10d4910
+	sourceLineageTag: [dbo].[DimCustomer]
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cf338481-6c20-4a50-a997-dfaf7bfaefd4
+		sourceLineageTag: CustomerKey
+		summarizeBy: count
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: 1db71233-5e38-4764-84fb-deef89cc6a7a
+		sourceLineageTag: CustomerID
+		summarizeBy: count
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: b2236077-2ce0-493b-ae58-3ff6c472ac28
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 5edcac36-47ba-4455-9769-3507fe6f5deb
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 1b58e9d3-d0a2-48e2-81da-3ba5ccc067ad
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimCustomer = entity
+		mode: directLake
+		source
+			entityName: DimCustomer
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+

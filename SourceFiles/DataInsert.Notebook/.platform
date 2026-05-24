@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "DataInsert"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4553e408-43cc-8420-42aa-c8aacb1c5e45"
+  }
+}

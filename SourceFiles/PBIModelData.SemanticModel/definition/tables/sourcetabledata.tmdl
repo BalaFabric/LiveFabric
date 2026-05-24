@@ -1,0 +1,67 @@
+table sourcetabledata
+	lineageTag: 84b9b59e-2c01-49ba-a56c-528ff5d5bc4b
+	sourceLineageTag: [dbo].[sourcetabledata]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: c1267ba8-2f94-4695-ba53-985f9a5a21fb
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: 7fb8f39f-4635-466a-b429-e63e0caa488f
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salary
+		dataType: int64
+		formatString: 0
+		lineageTag: 5021ec9d-c90b-4c80-97c5-1845ab55ac8a
+		sourceLineageTag: Salary
+		summarizeBy: sum
+		sourceColumn: Salary
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptName
+		dataType: string
+		lineageTag: f8ab1088-006e-4a8f-aa0a-a21e426816d4
+		sourceLineageTag: DeptName
+		summarizeBy: none
+		sourceColumn: DeptName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 03a21e84-65c8-40f9-9634-6f38e6e92269
+		sourceLineageTag: Location
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 0af810a5-3c65-4cfd-a1b2-81b72449b44d
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition sourcetabledata = entity
+		mode: directLake
+		source
+			entityName: sourcetabledata
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

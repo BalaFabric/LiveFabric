@@ -1,0 +1,168 @@
+table SalesDataTest
+	lineageTag: 58d6f031-5aea-45a5-8054-c3c283f55a03
+	sourceLineageTag: [dbo].[SalesDataTest]
+
+	column IrId
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: ca9e8d0c-df96-4b5d-9690-4e2e20f17aa1
+		sourceLineageTag: IrId
+		summarizeBy: count
+		sourceColumn: IrId
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrScenario
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 81ca4dab-3981-4474-be7b-b53a3a571fb5
+		sourceLineageTag: IrScenario
+		summarizeBy: none
+		sourceColumn: IrScenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column Shipmode
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: d6b7deba-84d3-4105-a6b3-9e21b033fbf7
+		sourceLineageTag: Shipmode
+		summarizeBy: none
+		sourceColumn: Shipmode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: f50d866d-f0e0-472e-bb75-3c1e8d2e76ed
+		sourceLineageTag: Region
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValueColumnName
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 7e99806c-6757-4549-a4ce-d670bca81a7c
+		sourceLineageTag: ValueColumnName
+		summarizeBy: none
+		sourceColumn: ValueColumnName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: double
+		sourceProviderType: decimal(25, 2)
+		lineageTag: 8305b90a-5e7f-466c-bc08-f58eb80e09c2
+		sourceLineageTag: Value
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ValueText
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: b6c8af25-2811-4815-b453-d1d60025cdde
+		sourceLineageTag: ValueText
+		summarizeBy: none
+		sourceColumn: ValueText
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastUpdatedAt
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: b17f4486-b788-4f94-8d46-7a9989a316d0
+		sourceLineageTag: LastUpdatedAt
+		summarizeBy: none
+		sourceColumn: LastUpdatedAt
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastUpdatedBy
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 25aa358c-6f15-4523-8286-df6dba706eef
+		sourceLineageTag: LastUpdatedBy
+		summarizeBy: none
+		sourceColumn: LastUpdatedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: e538231f-9e5c-4860-8e32-a31e0d6e31aa
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrNotes
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 353f0b1d-fe45-4161-a769-4e2b8c4ade65
+		sourceLineageTag: IrNotes
+		summarizeBy: none
+		sourceColumn: IrNotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrComments
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: ae2277b7-76f9-4fbf-b5ae-e55e6e87e715
+		sourceLineageTag: IrComments
+		summarizeBy: none
+		sourceColumn: IrComments
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrCellMeta
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: b560c392-3af8-4055-804d-2632aa5c087a
+		sourceLineageTag: IrCellMeta
+		summarizeBy: none
+		sourceColumn: IrCellMeta
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrWritebackUser
+		dataType: string
+		sourceProviderType: varchar(-1)
+		lineageTag: 7fb214b5-d29b-49a1-a92c-a045a431e51d
+		sourceLineageTag: IrWritebackUser
+		summarizeBy: none
+		sourceColumn: IrWritebackUser
+
+		annotation SummarizationSetBy = Automatic
+
+	column IrWritebackTimestamp
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: e6c0f035-2185-4b15-a4ed-5387674237a1
+		sourceLineageTag: IrWritebackTimestamp
+		summarizeBy: none
+		sourceColumn: IrWritebackTimestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SalesDataTest = entity
+		mode: directLake
+		source
+			entityName: SalesDataTest
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

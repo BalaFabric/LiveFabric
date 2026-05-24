@@ -1,0 +1,147 @@
+table destinationtabledata
+	lineageTag: 47502a38-b204-480c-9868-0e1ca50198c3
+	sourceLineageTag: [dbo].[destinationtabledata]
+
+	measure TotalSales = SUM(empdeltatable[Salary])
+		formatString: 0
+		lineageTag: e49cc30f-2caa-4475-9e49-98f50ec27979
+
+		changedProperty = Name
+
+	measure TotalRecords = DISTINCTCOUNT(destinationtabledata[Country])
+		formatString: 0
+		lineageTag: dab2d319-2b55-4ed5-91c2-dfaa5a3e8890
+
+		changedProperty = Name
+
+	column SurrogateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 43bc67be-e8a5-42c9-99d3-cbc07a5a981e
+		sourceLineageTag: SurrogateKey
+		summarizeBy: count
+		sourceColumn: SurrogateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: cdcaa610-82f8-4c56-b78f-ea884b47b840
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: ffefaae7-76ab-4e98-92ff-f7f0d1080af8
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salary
+		dataType: int64
+		formatString: 0
+		lineageTag: 9603e241-f406-4bf1-8a86-9939428c927a
+		sourceLineageTag: Salary
+		summarizeBy: sum
+		sourceColumn: Salary
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeptName
+		dataType: string
+		lineageTag: 4a278dd4-0109-4299-8ffe-122e06ee44b6
+		sourceLineageTag: DeptName
+		summarizeBy: none
+		sourceColumn: DeptName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 4bc732a5-830a-484a-b7f5-a83407b61532
+		sourceLineageTag: Location
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 7f4cf09b-e9ff-4a85-b5ce-dabfc1118a46
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e0cf0758-d64d-4e6a-b1cd-5c09ed7ba64a
+		sourceLineageTag: StartDate
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column EndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6a26b0b3-fc77-4b85-b2af-71160203fc06
+		sourceLineageTag: EndDate
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Active_Indicator
+		dataType: string
+		lineageTag: 92ece6a8-a358-40cc-88b5-3d69f73b67bd
+		sourceLineageTag: Active_Indicator
+		summarizeBy: none
+		sourceColumn: Active_Indicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column InsertedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bdd2b31e-2f09-4d43-a0d6-b99cc99c51a6
+		sourceLineageTag: InsertedDateTime
+		summarizeBy: none
+		sourceColumn: InsertedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column UpdatedDatetime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 490e0d76-9884-4a18-917f-4876a84256e7
+		sourceLineageTag: UpdatedDatetime
+		summarizeBy: none
+		sourceColumn: UpdatedDatetime
+
+		annotation SummarizationSetBy = Automatic
+
+	column Action
+		dataType: string
+		lineageTag: 31de3174-5bb3-4b79-bcfe-8e5f3c76cce4
+		sourceLineageTag: Action
+		summarizeBy: none
+		sourceColumn: Action
+
+		annotation SummarizationSetBy = Automatic
+
+	partition destinationtabledata = entity
+		mode: directLake
+		source
+			entityName: destinationtabledata
+			schemaName: dbo
+			expressionSource: 'DirectLake - DemoLH'
+

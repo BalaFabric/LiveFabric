@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "DynamicFolder"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "759457e5-22e0-899a-4b7f-d83d8c5939bc"
+  }
+}

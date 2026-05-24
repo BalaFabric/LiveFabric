@@ -1,0 +1,48 @@
+table Customer
+	lineageTag: da688f5f-3fcc-4f27-b094-458e723e1f39
+	sourceLineageTag: [dbo].[Customer]
+
+	column CustomerID
+		dataType: int64
+		formatString: 0
+		lineageTag: d1629702-0003-4af5-b7f1-30481ff66a30
+		sourceLineageTag: CustomerID
+		summarizeBy: count
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: 40d1d075-379b-4d67-9bdc-f609f364dc90
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 6cdb5cff-779d-4608-807a-bcbf9de4e469
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 107b745b-a89c-4722-8cec-49f213e4ea59
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Customer = entity
+		mode: directLake
+		source
+			entityName: Customer
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+

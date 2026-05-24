@@ -1,0 +1,49 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "InvokePipeline",
+        "typeProperties": {
+          "parameters": {
+            "TriggerType": {
+              "value": "@pipeline().TriggerType",
+              "type": "Expression"
+            },
+            "TriggerId": {
+              "value": "@pipeline().TriggerId",
+              "type": "Expression"
+            },
+            "PipelineTriggerByPipelineId": {
+              "value": "@pipeline().Pipeline",
+              "type": "Expression"
+            },
+            "PipelineTriggerByPipelineRunId": {
+              "value": "@pipeline().RunId",
+              "type": "Expression"
+            },
+            "PipelineTriggerByPipelineName": {
+              "value": "@pipeline().PipelineName",
+              "type": "Expression"
+            }
+          },
+          "waitOnCompletion": true,
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "pipelineId": "5043a7c3-0354-84d5-4bff-727328326f27",
+          "operationType": "InvokeFabricPipeline"
+        },
+        "externalReferences": {
+          "connection": "0a5e0c29-ea41-4a75-931f-a62a94d9392d"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Call Demo Pipeline",
+        "dependsOn": []
+      }
+    ]
+  }
+}

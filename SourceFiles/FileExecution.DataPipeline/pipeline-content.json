@@ -1,0 +1,100 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "759457e5-22e0-899a-4b7f-d83d8c5939bc",
+          "workspaceId": "00000000-0000-0000-0000-000000000000"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "File Process",
+        "dependsOn": []
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('File Process').output.result.exitValue,'failed')",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the below pipeline execution details.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineName: @{pipeline().PipelineName}</p>\n<p>ExecutionTime : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Failed Pipeline Execution Status"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Failed Notificaton",
+              "dependsOn": []
+            },
+            {
+              "type": "Fail",
+              "typeProperties": {
+                "message": "Pipeline Failed due to file errors",
+                "errorCode": "3443"
+              },
+              "name": "Pipeline Failed",
+              "dependsOn": [
+                {
+                  "activity": "Failed Notificaton",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            }
+          ],
+          "ifFalseActivities": [
+            {
+              "type": "Office365Email",
+              "typeProperties": {
+                "body": "<p>Hi Team,</p>\n<p>Please find the below pipeline execution details.</p>\n<p>WorkspaceId : @{pipeline().DataFactory}</p>\n<p>PipelineName: @{pipeline().PipelineName}</p>\n<p>ExecutionTime : @{utcNow()}</p>\n<p>Thanks,</p>\n<p>Data Engineering Team.</p>",
+                "to": "Bala@vgad222.onmicrosoft.com",
+                "subject": "Failed Pipeline Execution Status"
+              },
+              "externalReferences": {
+                "connection": "d5c29a12-f7c9-4feb-82d2-acdd10242fa9"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Success Email Alert",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "Condition Check",
+        "dependsOn": [
+          {
+            "activity": "File Process",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

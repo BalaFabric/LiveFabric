@@ -1,0 +1,4 @@
+relationship 0654224f-91c4-0391-55e0-378bc60df683
+	fromColumn: stagingcustomer.CusstomerLocation
+	toColumn: dimcustomer.CusstomerLocation
+

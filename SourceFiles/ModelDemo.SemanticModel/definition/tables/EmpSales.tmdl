@@ -1,0 +1,40 @@
+table EmpSales
+	lineageTag: c330e938-dbab-4347-9b09-0502bb163056
+	sourceLineageTag: [dbo].[EmpSales]
+
+	column EmpId
+		dataType: int64
+		formatString: 0
+		lineageTag: c3170512-e683-4f6c-9742-81c26fdc1e57
+		sourceLineageTag: EmpId
+		summarizeBy: count
+		sourceColumn: EmpId
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpName
+		dataType: string
+		lineageTag: dfb61a8f-9890-413d-866d-0c52fe0ededd
+		sourceLineageTag: EmpName
+		summarizeBy: none
+		sourceColumn: EmpName
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmpSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 14670a99-386b-4162-9c4b-3ac34a7c2684
+		sourceLineageTag: EmpSalary
+		summarizeBy: sum
+		sourceColumn: EmpSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EmpSales = entity
+		mode: directLake
+		source
+			entityName: EmpSales
+			schemaName: dbo
+			expressionSource: 'DirectLake - DWDemo'
+
